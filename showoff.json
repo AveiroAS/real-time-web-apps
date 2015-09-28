@@ -1,0 +1,15 @@
+{
+  "name": "DB driven real time experience in web apps",
+  "description": "websockets and SSE (similarities, differences, what to chose when), demo (with references to codebase) of websockets with real time events triggered by native postgres LISTEN/NOTIFY (aka PUB/SUB) events @Aveiro",
+  "author": "Grzegorz Brzezinka",
+  "templates" : {
+      "special" : "simple.tpl"
+  },
+  "pause_msg": "Paused !!!",
+  "sections": [
+    {"section":"1live_solutions"},
+    {"section":"2db_live"}
+
+  ],
+  "edit":"true"
+}
