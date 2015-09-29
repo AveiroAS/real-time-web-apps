@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<!-- saved from url=(0029)http://localhost:9090/onepage -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	
+  <title>DB driven real time experience in web apps</title>
+
+  
+
+  
+    
+      <link rel="stylesheet" href="./index_files/reset.css" type="text/css">
+    
+      <link rel="stylesheet" href="./index_files/showoff.css" type="text/css">
+    
+      <link rel="stylesheet" href="./index_files/ui.all.css" type="text/css">
+    
+      <link rel="stylesheet" href="./index_files/sh_style.css" type="text/css">
+    
+      <link rel="stylesheet" href="./index_files/onepage.css" type="text/css">
+    
+    
+      <link rel="stylesheet" href="./index_files/something.css" type="text/css">
+    
+
+    
+      <script type="text/javascript" src="./index_files/jquery-1.4.2.min.js"></script>
+    
+      <script type="text/javascript" src="./index_files/jquery-print.js"></script>
+    
+      <script type="text/javascript" src="./index_files/showoff.js"></script>
+    
+      <script type="text/javascript" src="./index_files/onepage.js"></script>
+    
+      <script type="text/javascript" src="./index_files/sh_main.min.js"></script>
+    
+      <script type="text/javascript" src="./index_files/core.js"></script>
+    
+      <script type="text/javascript" src="./index_files/showoffcore.js"></script>
+    
+    
+    
+    <script type="text/javascript">
+      $(document).ready(function() {
+        setupOnePage()
+      });
+    </script>
+
+  
+<script type="text/javascript" src="chrome-extension://aadgmnobpdmgmigaicncghmmoeflnamj/ng-inspector.js"></script><style id="style-1-cropbar-clipper">/* Copyright 2014 Evernote Corporation. All rights reserved. */
+.en-markup-crop-options {
+    top: 18px !important;
+    left: 50% !important;
+    margin-left: -100px !important;
+    width: 200px !important;
+    border: 2px rgba(255,255,255,.38) solid !important;
+    border-radius: 4px !important;
+}
+
+.en-markup-crop-options div div:first-of-type {
+    margin-left: 0px !important;
+}
+</style></head>
+
+<body>
+<div id="slides">
+  <div id="1live_solutions_slidesA" class="slide title-slide center" data-transition="none">
+<div class="content title-slide center" ref="1live_solutions/slidesA/1" style="margin-top: 0px;">
+<div class="notes">
+<p>first slide</p>
+</div>
+
+<p><img src="./index_files/aveiro_logo.png" alt="aveiro"></p>
+
+<h1>DB driven <br> real time experience <br> in web apps</h1>
+</div>
+</div>
+<div id="1live_solutions_slidesA" class="slide subsection" data-transition="none">
+<div class="content subsection" ref="1live_solutions/slidesA/2" style="margin-top: 61px;">
+<h1>(Timeout/Long) pooling</h1>
+
+<p><small>Traditional techniques</small></p>
+
+<p><img src="./index_files/poolingVSlongpooling.gif" alt="aveiro"></p>
+
+<blockquote>
+<p>In long pooling, server keeps the GET request open until new content has arrived.</p>
+</blockquote>
+</div>
+</div>
+<div id="1live_solutions_slidesA" class="slide " data-transition="fade">
+<div class="content " ref="1live_solutions/slidesA/3" style="margin-top: 215px;">
+<h1>Pooling</h1>
+
+<table>
+<thead>
+<tr>
+<th>Pros</th>
+<th>Cons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>
+HTTP over standard ports = full browser support
+</td>
+<td>
+Significant server overhead
+</td>
+</tr>
+<tr>
+  <td>
+</td>
+<td>
+Blocking IO
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="1live_solutions_slidesA" class="slide subsection sse" data-transition="none">
+<div class="content subsection sse" ref="1live_solutions/slidesA/4" style="margin-top: 71.5px;">
+<h1>Server-Sent Events (SSE)</h1>
+
+<ul>
+<li>One-way communication (server-&gt;client)</li>
+<li>
+<a href="http://www.w3.org/TR/eventsource/">HTML5 'standard'</a>
+<img src="./index_files/sse.png" alt="SSEsupport">
+</li>
+</ul>
+</div>
+</div>
+<div id="1live_solutions_slidesA" class="slide small" data-transition="fade">
+<div class="content small" ref="1live_solutions/slidesA/5" style="margin-top: 105.5px;">
+<h1>Implementation</h1>
+
+<p><small>Extremely simple</small></p>
+
+<pre class="sh_javascript sh_sourceCode"><code><span class="sh_comment">//Server side (eg. Rails/PHP/node.js)</span>
+res<span class="sh_symbol">.</span>writeHead <span class="sh_number">200</span><span class="sh_symbol">,</span>
+  <span class="sh_string">'Content-Type'</span><span class="sh_symbol">:</span> <span class="sh_string">'text/event-stream'</span>
+  <span class="sh_string">'Cache-Control'</span><span class="sh_symbol">:</span> <span class="sh_string">'no-cache'</span>
+  <span class="sh_string">'Connection'</span><span class="sh_symbol">:</span> <span class="sh_string">'keep-alive'</span>
+res<span class="sh_symbol">.</span>write <span class="sh_string">'retry: 10000</span><span class="sh_specialchar">\n</span><span class="sh_string">'</span>
+res<span class="sh_symbol">.</span>write <span class="sh_string">'event: aveiro_stocks</span><span class="sh_specialchar">\n</span><span class="sh_string">'</span>
+res<span class="sh_symbol">.</span>write <span class="sh_string">'data: '</span> <span class="sh_symbol">+</span> <span class="sh_number">1298.08</span> <span class="sh_symbol">+</span> <span class="sh_string">'</span><span class="sh_specialchar">\n\n</span><span class="sh_string">'</span>
+
+<span class="sh_comment">//client side</span>
+source <span class="sh_symbol">=</span> <span class="sh_keyword">new</span> <span class="sh_function">EventSource</span><span class="sh_symbol">(</span><span class="sh_string">"stream"</span><span class="sh_symbol">);</span>
+source<span class="sh_symbol">.</span><span class="sh_function">addEventListener</span><span class="sh_symbol">(</span><span class="sh_string">"aveiro_stocks"</span><span class="sh_symbol">,</span> <span class="sh_keyword">function</span><span class="sh_symbol">(</span>event<span class="sh_symbol">)</span> <span class="sh_cbracket">{</span>
+    console<span class="sh_symbol">.</span><span class="sh_function">info</span><span class="sh_symbol">(</span>event<span class="sh_symbol">);</span>
+<span class="sh_cbracket">}</span><span class="sh_symbol">,</span> <span class="sh_keyword">false</span><span class="sh_symbol">);</span></code></pre>
+
+<p><a href="http://127.0.0.1:3999/">DEMO</a></p>
+</div>
+</div>
+<div id="1live_solutions_slidesA" class="slide subsection sse" data-transition="none">
+<div class="content subsection sse" ref="1live_solutions/slidesA/6" style="margin-top: 44.5px;">
+<h1>Websockets (WS)</h1>
+
+<ul>
+<li>Two-way communication (server&lt;-&gt;client)</li>
+<li>special protocol <code>ws://</code>, special server</li>
+<li>
+<a href="http://www.w3.org/TR/websockets/">HTML5 standard</a>
+<img src="./index_files/ws.png" alt="WSsupport">
+</li>
+</ul>
+</div>
+</div>
+<div id="1live_solutions_slidesA" class="slide small" data-transition="fade">
+<div class="content small" ref="1live_solutions/slidesA/7" style="margin-top: 68px;">
+<h1>Implementation</h1>
+
+<p><small>Much more fancy, helper library required</small></p>
+
+<pre class="sh_javascript sh_sourceCode"><code><span class="sh_comment">//Server side (eg. nodejs-websocket)</span>
+<span class="sh_keyword">var</span> server <span class="sh_symbol">=</span> ws<span class="sh_symbol">.</span><span class="sh_function">createServer</span><span class="sh_symbol">(</span><span class="sh_keyword">function</span> <span class="sh_symbol">(</span>conn<span class="sh_symbol">)</span> <span class="sh_cbracket">{</span>
+    console<span class="sh_symbol">.</span><span class="sh_function">log</span><span class="sh_symbol">(</span><span class="sh_string">"New connection"</span><span class="sh_symbol">)</span>
+    conn<span class="sh_symbol">.</span><span class="sh_function">on</span><span class="sh_symbol">(</span><span class="sh_string">"text"</span><span class="sh_symbol">,</span> <span class="sh_keyword">function</span> <span class="sh_symbol">(</span>str<span class="sh_symbol">)</span> <span class="sh_cbracket">{</span>
+        console<span class="sh_symbol">.</span><span class="sh_function">log</span><span class="sh_symbol">(</span><span class="sh_string">"Received "</span><span class="sh_symbol">+</span>str<span class="sh_symbol">)</span>
+        conn<span class="sh_symbol">.</span><span class="sh_function">sendText</span><span class="sh_symbol">(</span>str<span class="sh_symbol">.</span><span class="sh_function">toUpperCase</span><span class="sh_symbol">()+</span><span class="sh_string">"!!!"</span><span class="sh_symbol">)</span>
+    <span class="sh_cbracket">}</span><span class="sh_symbol">)</span>
+    conn<span class="sh_symbol">.</span><span class="sh_function">on</span><span class="sh_symbol">(</span><span class="sh_string">"close"</span><span class="sh_symbol">,</span> <span class="sh_keyword">function</span> <span class="sh_symbol">(</span>code<span class="sh_symbol">,</span> reason<span class="sh_symbol">)</span> <span class="sh_cbracket">{</span>
+        console<span class="sh_symbol">.</span><span class="sh_function">log</span><span class="sh_symbol">(</span><span class="sh_string">"Connection closed"</span><span class="sh_symbol">)</span>
+    <span class="sh_cbracket">}</span><span class="sh_symbol">)</span>
+<span class="sh_cbracket">}</span><span class="sh_symbol">).</span><span class="sh_function">listen</span><span class="sh_symbol">(</span><span class="sh_number">8001</span><span class="sh_symbol">)</span>
+
+<span class="sh_comment">//client side</span>
+connection <span class="sh_symbol">=</span> <span class="sh_keyword">new</span> <span class="sh_function">WebSocket</span><span class="sh_symbol">(</span><span class="sh_string">"ws://localhost:8081"</span><span class="sh_symbol">)</span>
+connection<span class="sh_symbol">.</span>onmessage <span class="sh_symbol">=</span> <span class="sh_keyword">function</span> <span class="sh_symbol">(</span>event<span class="sh_symbol">)</span> <span class="sh_cbracket">{</span>
+    console<span class="sh_symbol">.</span><span class="sh_function">log</span><span class="sh_symbol">(</span>event<span class="sh_symbol">);</span>
+<span class="sh_cbracket">}</span></code></pre>
+
+<p><a href="http://127.0.0.1:8080/">DEMO</a></p>
+</div>
+</div>
+<div id="2db_live_slidesA" class="slide subsection sse" data-transition="none">
+<div class="content subsection sse" ref="2db_live/slidesA/1" style="margin-top: 146px;">
+<h1>Live database notifications</h1>
+
+<ul>
+<li>Standard in NoSQL DBs (eg. Redis, MongoDB etc.) PUB/SUB pattern</li>
+<li>supported by PostgreSQL LISTEN/NOTIFY</li>
+<li>idea: TRIGGER on table INSERT/UPDATE the NOTIFY event, that gets transferred through SSE/websockets</li>
+</ul>
+</div>
+</div>
+<div id="2db_live_slidesA" class="slide small" data-transition="fade">
+<div class="content small" ref="2db_live/slidesA/2" style="margin-top: 263px;">
+<h1>create DB</h1>
+
+<pre class="sh_sql sh_sourceCode"><code><span class="sh_keyword">CREATE</span> <span class="sh_keyword">TABLE</span> activity_feeds <span class="sh_symbol">(</span>
+   id <span class="sh_type">INT</span> <span class="sh_keyword">PRIMARY</span> <span class="sh_keyword">KEY</span>     <span class="sh_keyword">NOT</span> <span class="sh_keyword">NULL</span><span class="sh_symbol">,</span>
+   title        <span class="sh_type">CHAR</span><span class="sh_symbol">(</span><span class="sh_number">50</span><span class="sh_symbol">),</span>
+   performed_at        <span class="sh_type">TIMESTAMP</span> <span class="sh_keyword">DEFAULT</span> now<span class="sh_symbol">()</span>
+ <span class="sh_symbol">);</span></code></pre>
+</div>
+</div>
+<div id="2db_live_slidesA" class="slide small" data-transition="fade">
+<div class="content small" ref="2db_live/slidesA/3" style="margin-top: 118.5px;">
+<h1>function to fire NOTIFY event</h1>
+
+<pre class="sh_sql sh_sourceCode"><code>  <span class="sh_keyword">CREATE</span> <span class="sh_keyword">OR</span> <span class="sh_keyword">REPLACE</span> <span class="sh_keyword">FUNCTION</span> notify_activity_insert<span class="sh_symbol">()</span> 
+  RETURNS <span class="sh_keyword">trigger</span> <span class="sh_keyword">AS</span> 
+  $$
+  DECLARE
+  BEGIN
+    PERFORM pg_notify<span class="sh_symbol">(</span><span class="sh_string">'activity_feed'</span><span class="sh_symbol">,</span> row_to_json<span class="sh_symbol">(</span>NEW<span class="sh_symbol">)::</span><span class="sh_type">TEXT</span><span class="sh_symbol">);</span>
+    <span class="sh_keyword">RETURN</span> new<span class="sh_symbol">;</span>
+  END<span class="sh_symbol">;</span>
+  $$ <span class="sh_keyword">LANGUAGE</span> plpgsql<span class="sh_symbol">;</span></code></pre>
+
+<h1>create trigger on insert</h1>
+
+<pre class="sh_sql sh_sourceCode"><code><span class="sh_keyword">CREATE</span> <span class="sh_keyword">TRIGGER</span> activity_feed_trigger 
+AFTER <span class="sh_keyword">INSERT</span> <span class="sh_keyword">ON</span> activity_feeds 
+<span class="sh_keyword">FOR</span> EACH ROW EXECUTE <span class="sh_keyword">PROCEDURE</span> notify_activity_insert<span class="sh_symbol">();</span></code></pre>
+</div>
+</div>
+<div id="2db_live_slidesA" class="slide small" data-transition="fade">
+<div class="content small" ref="2db_live/slidesA/4" style="margin-top: 240.5px;">
+<h1>LISTEN to pg notifications (node.js)</h1>
+
+<pre class="sh_javascript sh_sourceCode"><code>dbclient <span class="sh_symbol">=</span> <span class="sh_keyword">new</span> pg<span class="sh_symbol">.</span><span class="sh_function">Client</span><span class="sh_symbol">(</span>pg<span class="sh_symbol">.</span>defaults<span class="sh_symbol">)</span>
+dbclient<span class="sh_symbol">.</span><span class="sh_function">connect</span><span class="sh_symbol">()</span>
+dbclient<span class="sh_symbol">.</span>query <span class="sh_string">"LISTEN </span><span class="sh_specialchar">\"</span><span class="sh_string">"</span> <span class="sh_symbol">+</span> <span class="sh_string">"activity_feed"</span> <span class="sh_symbol">+</span> <span class="sh_string">"</span><span class="sh_specialchar">\"</span><span class="sh_string">"</span>
+dbclient<span class="sh_symbol">.</span>on <span class="sh_string">"notification"</span><span class="sh_symbol">,</span> <span class="sh_symbol">(</span>data<span class="sh_symbol">)</span> <span class="sh_symbol">-&gt;</span>
+  console<span class="sh_symbol">.</span>log data</code></pre>
+
+<p><a href="http://localhost:8090/">DEMO</a></p>
+</div>
+</div>
+<div id="2db_live_slidesA" class="slide " data-transition="fade">
+<div class="content " ref="2db_live/slidesA/5" style="margin-top: 166px;">
+<h1>Further reading</h1>
+
+<ul>
+<li><a href="http://www.postgresql.org/docs/9.4/static/sql-notify.html">postgres docs</a></li>
+<li><a href="http://socket.io/">Socket.IO</a></li>
+<li><a href="https://github.com/byjg/jquery-sse">jQuery SSE</a></li>
+</ul>
+
+<h2>Thanks, questions?</h2>
+</div>
+</div>
+
+</div>
+
+
+</body></html>
