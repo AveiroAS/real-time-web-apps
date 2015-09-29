@@ -1,2 +1,5 @@
 static
 .idea/
+
+demo-websockets-db/node_modules
+stats/

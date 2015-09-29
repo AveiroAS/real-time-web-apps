@@ -1,0 +1,23 @@
+{
+  "name": "demo-websockets-db",
+  "version": "1.0.0",
+  "author": {
+    "name": "Grzegorz Brzezinka",
+    "url": "http://aveiro.no"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@bitbucket.org:aveiro/real-time-web-apps.git"
+  },
+  "description": "Websocket server demo with db notify",
+  "dependencies": {
+    "coffee-script": "^1.9.3",
+    "pg": "4.4.0",
+    "pg-native": "1.8.1",
+    "pg-query": "^0.10.1",
+    "promise-pg": "0.1.0",
+    "nodejs-websocket": "1.4.0",
+    "merge": "^1.2.0"
+  },
+  "main": "websocket_server.coffee"
+}

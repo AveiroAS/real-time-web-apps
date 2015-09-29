@@ -1,131 +1,61 @@
-<!SLIDE title-slide center >
-.notes first slide
+<!SLIDE subsection sse>
 
-![aveiro](aveiro_logo.png)
-# Crash course <br> Ruby on Rails #
-![RoR](Ruby_on_Rails.png)
+# Live database notifications
+* Standard in NoSQL DBs (eg. Redis, MongoDB etc.) PUB/SUB pattern
+* supported by PostgreSQL LISTEN/NOTIFY
+* idea: TRIGGER on table INSERT/UPDATE the NOTIFY event, that gets transferred through SSE/websockets
 
-<!SLIDE subsection >
+<!SLIDE small transition=fade>
 
-# The RUBY language
+# create DB
+
+    @@@sql
+    CREATE TABLE activity_feeds (
+       id INT PRIMARY KEY     NOT NULL,
+       title        CHAR(50),
+       performed_at        TIMESTAMP DEFAULT now()
+     );
+     
+<!SLIDE small transition=fade>
+
+# function to fire NOTIFY event
+
+    @@@sql
+      CREATE OR REPLACE FUNCTION notify_activity_insert() 
+      RETURNS trigger AS 
+      $$
+      DECLARE
+      BEGIN
+        PERFORM pg_notify('activity_feed', row_to_json(NEW)::TEXT);
+        RETURN new;
+      END;
+      $$ LANGUAGE plpgsql;
+      
+# create trigger on insert
+
+    @@@sql
+    CREATE TRIGGER activity_feed_trigger 
+    AFTER INSERT ON activity_feeds 
+    FOR EACH ROW EXECUTE PROCEDURE notify_activity_insert();
+    
+<!SLIDE small transition=fade>
+
+# LISTEN to pg notifications (node.js)
+
+    @@@javascript
+    dbclient = new pg.Client(pg.defaults)
+    dbclient.connect()
+    dbclient.query "LISTEN \"" + "activity_feed" + "\""
+    dbclient.on "notification", (data) ->
+      console.log data
+    
+[DEMO](http://localhost:8090)
 
 <!SLIDE transition=fade>
+# Further reading
 
-# Ruby is...
->A dynamic, open source programming language with a focus on simplicity and productivity. It has an elegant syntax that is natural to read and easy to write.
+* [postgres docs](http://www.postgresql.org/docs/9.4/static/sql-notify.html)
+* [Socket.IO](http://socket.io/)
+* [jQuery SSE](https://github.com/byjg/jquery-sse)
 
-![ruby](ruby.gif)
-
-<small>www.ruby-lang.org/</small>
-
-<!SLIDE small transition=fade>
-
-# Powerful programming language #
-
-## supports multithreading
-
-    @@@ Ruby
-    4.times do |i|
-        threads << Thread.new do
-          mutex.synchronize {
-            resource.wait(mutex)
-            # complicated task
-          }
-        end
-    end
-
-## supports multiple cores (processes)
-
-    @@@ Ruby
-    4.times do |i|
-        fork do
-          # complicated task
-        end
-    end
-
-<!SLIDE small transition=fade>
-
-# Ruby is very expressive #
-
-    @@@ Ruby
-    # Method example
-    def read(path)
-      return nil unless File.exist?(path)
-      File.read(path)
-    end
-
-    # RSpec example
-    Post.last.should have(10).comments
-
-<!SLIDE small transition=fade>
-
-# Ruby is elegant #
-
-    @@@ Ruby
-    # Sinatra example
-    get '/' do
-      'Hello world!'
-    end
-
-    # Block example
-    ChessGame.new do |move|
-      move.black_pawn(forward)
-      move.white_pawn(forward)
-      # ...
-      move.white_queen(pwn_king)
-    end
-
-<!SLIDE commandline incremental transition=fade>
-
-# Everything is an object! #
-
-	$irb> "foo".class
-	String
-	$irb> 1.class
-	Fixnum
-	$irb> abs(-1)
-	NoMethodError: undefined method `abs' for main:Object
-	$irb> -1.abs()
-	1
-	$irb> "hello aveiro".pluralize.camelize
-	"Hello aveiros"
-	$irb> %w(world galaxy).each{|s| puts "hello #{s}".upcase}
-	"HELLO WORLD"
-	"HELLO GALAXY"
-
-<!SLIDE small transition=fade>
-
-# Ruby classes #
-
-    @@@ Ruby
-    class Greeter
-      def initialize(name = "World")
-        @name = name
-      end
-      def say_hi
-        puts "Hi #{@name}!"
-      end
-      def say_bye
-        puts "Bye #{@name}, come back soon."
-      end
-    end
-
-<!SLIDE small transition=fade>
-
-# Ruby arrays, hashes, ranges #
-
-    @@@ Ruby
-    array = ["one", "two", "nine"]
-    hash = {one: 1, two: 2, nine: 9}
-    range = 1..4
-    range.to_a
-    # => [2, 3, 4]
-    range.include?(3)
-    # => true
-
-
-
-
-
-
-
+## Thanks, questions?
